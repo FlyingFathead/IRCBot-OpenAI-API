@@ -213,7 +213,8 @@ class Bot:
         # Update the chatroom's conversation history in chatroom_contexts
         chatroom_contexts[bot.channel] = conversation_history
 
-        return output_text_clean
+        # Remove newline and carriage return characters
+        return output_text_clean.replace("\n", " ").replace("\r", " ")
 
     def generate_response(bot, input_text, sender_username):
         response = interact_model(bot, input_text, sender_username)
