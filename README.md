@@ -3,9 +3,9 @@ Python-based simple IRC (intenet relay chat) chatroom bot that uses OpenAI API (
 
 Hey, buddy! Wanna shove that GPT-3.5 or GPT-4 OpenAI API into good'ole IRC as a chatbot? Now it's possible!
 
-1. Just install the required packages with `pip install -r requirements.txt`
+1. Install the required packages with `pip install -r requirements.txt`
 2. Crank your OpenAI access token into either an environment variable or into `api_token.txt` within the same directory.
-3. Edit the Python file for your bot details and channels.
+3. Edit the Python file for your bot configuration.
 4. Launch `python IRCbot-OpenAI-API.py` and off you go!
 
 The bot has a chat history memory but only does API calls whenever it's addressed with lines starting with the bot's nick with a  : , so that it's not babbling with replies to every single thing that's being said. You "might" want to rate limit it on bigger channels.
