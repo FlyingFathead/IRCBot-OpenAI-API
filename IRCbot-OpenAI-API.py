@@ -1,5 +1,5 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.23 | 02/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.24 | 02/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
 # time & logging
@@ -55,7 +55,7 @@ MSG_INVALID_MUTE_SYNTAX = "Error: Invalid mute message syntax. Usage: !mute <min
 MSG_NO_MUTE_PRIV = "Error: Apologies, dear {}, but you can't just silence me! You don't have the necessary privileges."
 MSG_MUTE_SUCCESS = "I'll be quiet for {} minutes at the request of user {}! Shh!"
 MSG_NO_GOAWAY_PRIV = "Error: Unfortunately, {}, you don't have the rights to send me away! No!"
-MSG_GOAWAY_SUCCESS = "Now it's time for me to go, see you soon! 😢"
+MSG_GOAWAY_SUCCESS = "Now it's time for me to go, I hope to see you again some day! 😢"
 
 """ # Define messages (alternative, in Finnish):
 MSG_RATE_LIMIT = "Sori! Keke on nyt tauolla, koita myöhemmin uudelleen!"
@@ -66,7 +66,8 @@ MSG_INVALID_MUTE_SYNTAX = "Virhe: Epävalidi mute-viestin syntaksi. Käyttöohje
 MSG_NO_MUTE_PRIV = "Virhe: Pahoitteluni, arvon {}, mutta minua et noin vaan hiljennä! Sinulla ei ole siihen tarvittavia oikeuksia."
 MSG_MUTE_SUCCESS = "ChatKeke on nyt vaiti {} minuuttia käyttäjän {} pyynnöstä! Tui tui!"
 MSG_NO_GOAWAY_PRIV = "Virhe: Valitettavasti, {} sinulla ei ole oikeuksia lähettää minua pois! Ni! "
-MSG_GOAWAY_SUCCESS = "Nyt minun on aika mennä, nähdään pian! 😢" """
+MSG_GOAWAY_SUCCESS = "Nyt minun on näköjään aika mennä, toivottavasti nähdään taas pian! 😢"
+"""
 
 # ===============
 # Admin settings
