@@ -9,3 +9,4 @@ The bot has a chat history memory but only does API calls whenever it's addresse
 
 ---
 Brought to you by [FlyingFathead](https://github.com/FlyingFathead) & ChaosWhisperer. 
+Contact: flyingfathead <|> protonmail <|> com
