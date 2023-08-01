@@ -17,7 +17,7 @@ import configparser
 # for fixing non-unicode inputs
 from jaraco.stream import buffer
 
-import json, os, string, sys, threading, random, logging, time
+import json, os, string, sys, threading, logging, time
 import re
 import os
 import random
