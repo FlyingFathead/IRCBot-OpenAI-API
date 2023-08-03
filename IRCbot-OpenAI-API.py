@@ -33,7 +33,7 @@ import openai
 # > config
 #
 # Specify the name of the config file
-config_filename = 'config_fi.json'  # `config.json`` for English config
+config_filename = 'config.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
