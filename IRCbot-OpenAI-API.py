@@ -1,5 +1,5 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.31 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.30 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
 #
@@ -316,7 +316,13 @@ class Bot:
         logging.info(f"Realname: {REALNAME}")
 
         try:
-            self.connection = self.reactor.server().connect(self.server, PORT, self.nickname)
+            self.connection = self.reactor.server().connect(
+                self.server, 
+                PORT, 
+                self.nickname, 
+                username=USERNAME, # Pass the USERNAME here
+                realname=REALNAME  # Pass the REALNAME here
+            )
         except irc.client.ServerConnectionError as x:
             logging.error(f"Failed to connect to {self.server}: {x}")
             sys.exit(1)
