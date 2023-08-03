@@ -1,10 +1,14 @@
 # IRC chatbot for OpenAI API (GPT-3.5, GPT-4...)
+# ===
+# NOTE: You will need the OpenAI API key to run this as-is!
+# Please get your API key from: https://openai.com/
+# ===
 # by FlyingFathead & ChaosWhisperer | v0.30 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
-#
+#   =======
 # > imports
-#
+#   =======
 
 # time & logging
 from datetime import datetime, timedelta
@@ -29,11 +33,12 @@ import os
 import random
 import openai
 
-#
+#   ======
 # > config
-#
+#   ======
+
 # Specify the name of the config file
-config_filename = 'config.json'  # `config.json`` for English config
+config_filename = 'config_fi.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
@@ -161,9 +166,9 @@ api_system_message_template = config['DEFAULT']['api_system_message']
 api_system_message = api_system_message_template.format(NICKNAME=NICKNAME, NETWORK=NETWORK, CHANNEL=CHANNEL, BOT_ADMIN_INFO=BOT_ADMIN_INFO, SERVER=SERVER)
 
 # ~~~
-#
+#   ==========
 # > let's roll
-#
+#   ==========
 
 # Variable to hold the mute end time
 mute_end_time = None
