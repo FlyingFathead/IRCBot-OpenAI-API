@@ -22,7 +22,7 @@ USE_EMOJI_DICT = True
 CONVERT_TO_LOWER = True
 ```
 # Prerequisites
-- Python 3.8 or later, probably. Tested and running OK on Python 3.9.16
+- at least Python 3.8 or later, probably. Tested and running OK on `Python 3.9.16`
 - `openai`, `jaraco.stream` and `irc` PyPi packages
 - OpenAI API key (from [openai.com](https://openai.com))
 
