@@ -1,10 +1,11 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.30 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.31 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
 #
 # > imports
 #
+
 # time & logging
 from datetime import datetime, timedelta
 import time
@@ -32,7 +33,7 @@ import openai
 # > config
 #
 # Specify the name of the config file
-config_filename = 'config_vittu.json'  # `config.json`` for English config
+config_filename = 'config.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
@@ -284,13 +285,14 @@ def split_message(message, max_bytes):
     return messages
 
 class Bot:
-    def __init__(self, server, channel, nickname, channel_password, messages):
-        self.channel_password = channel_password     
+    def __init__(self, server, channel, nickname, channel_password, messages, bot_is_verbose):
+        self.bot_is_verbose = bot_is_verbose  # New instance variable
         self.message_count = 0
         self.reactor = irc.client.Reactor()
         # self.reactor.server().errors = 'ignore'  # Ignore encoding errors; treat inbound text as-is
         self.server = server
         self.channel = channel
+        self.channel_password = channel_password
         self.nickname = nickname
 
         # UTF-8 fixes
@@ -333,12 +335,46 @@ class Bot:
 
         self.connection.add_global_handler("welcome", self.on_connect)
         self.connection.add_global_handler("pubmsg", self.on_pubmsg)
-    
+        self.connection.add_global_handler("privmsg", self.on_privmsg)
+
     def on_connect(self, connection, event):
     # Join the channel after the connection is established
         print("[INFO] Connection to server established. Joining channel.")
         self.connection.join(self.channel)
 
+
+    # Commands to take in as `/msg`'s from admins
+    def on_privmsg(self, connection, event):
+        global RATE_LIMIT_SECONDS        
+        sender_username = event.source.nick  # Get the sender's username from the IRC event
+        input_text = event.arguments[0]  # Get the text of the message
+
+        # Only process commands if the sender is an admin
+        if sender_username in ADMIN_NICKNAMES:
+            # Handle rate limit command
+            if input_text.startswith("!ratelimit"):
+                try:
+                    new_rate_limit = int(input_text.split(" ")[1])  # Get the new rate limit from the command
+                    previous_rate_limit = RATE_LIMIT_SECONDS  # Store the previous rate limit
+                    RATE_LIMIT_SECONDS = new_rate_limit  # Update the rate limit
+
+                    # Print the rate limit change to the console
+                    logging.info(f"User {sender_username} changed rate limit from {previous_rate_limit} to {new_rate_limit}")
+
+                    message_parts = split_message(MSG_RATE_LIMIT_SET.format(new_rate_limit, sender_username), 512)
+                    for part in message_parts:
+                        self.connection.privmsg(sender_username, part)  # Send PM
+                except (IndexError, ValueError):
+                    message_parts = split_message(MSG_INVALID_RATE_LIMIT, 512)
+                    for part in message_parts:
+                        self.connection.privmsg(sender_username, part)  # Send PM
+            # Other admin commands would go here...
+        else:
+            message_parts = split_message(MSG_NO_ADMIN_PRIV.format(sender_username), 512)
+            for part in message_parts:
+                self.connection.privmsg(sender_username, part)  # Send PM
+
+    # Public message responses
     def on_pubmsg(self, connection, event):
         global mute_end_time
         global last_response_time
@@ -357,18 +393,26 @@ class Bot:
                 if sender_username in ADMIN_NICKNAMES:
                     try:
                         new_rate_limit = int(input_text.split(" ")[1])  # Get the new rate limit from the command
+                        previous_rate_limit = RATE_LIMIT_SECONDS  # Store the previous rate limit
                         RATE_LIMIT_SECONDS = new_rate_limit  # Update the rate limit
-                        message_parts = split_message(MSG_RATE_LIMIT_SET.format(new_rate_limit, sender_username), 512)
-                        for part in message_parts:
-                            self.connection.privmsg(self.channel, part)
+
+                        # Print the rate limit change to the console
+                        logging.info(f"User {sender_username} changed rate limit from {previous_rate_limit} to {new_rate_limit}")
+
+                        if bot_is_verbose:
+                            message_parts = split_message(MSG_RATE_LIMIT_SET.format(new_rate_limit, sender_username), 512)
+                            for part in message_parts:
+                                self.connection.privmsg(self.channel, part)
                     except (IndexError, ValueError):
-                        message_parts = split_message(MSG_INVALID_RATE_LIMIT, 512)
+                        if bot_is_verbose:
+                            message_parts = split_message(MSG_INVALID_RATE_LIMIT, 512)
+                            for part in message_parts:
+                                self.connection.privmsg(self.channel, part)
+                else:
+                    if bot_is_verbose:
+                        message_parts = split_message(MSG_NO_ADMIN_PRIV.format(sender_username), 512)
                         for part in message_parts:
                             self.connection.privmsg(self.channel, part)
-                else:
-                    message_parts = split_message(MSG_NO_ADMIN_PRIV.format(sender_username), 512)
-                    for part in message_parts:
-                        self.connection.privmsg(self.channel, part)
 
             # Handle mute command
             if input_text.startswith("!mute"):
@@ -376,11 +420,15 @@ class Bot:
                     try:
                         mute_duration = int(input_text.split(" ")[1])  # Get the number of minutes from the command
                         mute_end_time = datetime.now() + timedelta(minutes=mute_duration)  # Calculate the mute end time
-                        self.connection.privmsg(self.channel, MSG_MUTE_SUCCESS.format(mute_duration, sender_username))
+                        logging.info(f"User {sender_username} muted the bot for {mute_duration} minutes.")
+                        if bot_is_verbose:
+                            self.connection.privmsg(self.channel, MSG_MUTE_SUCCESS.format(mute_duration, sender_username))
                     except (IndexError, ValueError):
-                        self.connection.privmsg(self.channel, MSG_INVALID_MUTE_SYNTAX)
+                        if bot_is_verbose:
+                            self.connection.privmsg(self.channel, MSG_INVALID_MUTE_SYNTAX)
                 else:
-                    self.connection.privmsg(self.channel, MSG_NO_MUTE_PRIV.format(sender_username))
+                    if bot_is_verbose:
+                        self.connection.privmsg(self.channel, MSG_NO_MUTE_PRIV.format(sender_username))
 
             # Handle goaway command
             if input_text.startswith("!goaway"):
@@ -450,7 +498,7 @@ class Bot:
                         print("Rate limit has expired. Answering to messages again...")  # Console message for rate limit expiration
                 else:
                     # Send a rate limit warning to the user, if the bot_is_verbose flag is True
-                    if bot_is_verbose:
+                    if self.bot_is_verbose:
                         self.connection.privmsg(self.channel, MSG_RATE_LIMIT)
 
         except UnicodeDecodeError:
@@ -534,5 +582,5 @@ class Bot:
         self.reactor.process_forever()
 
 if __name__ == "__main__":
-    bot = Bot(SERVER, CHANNEL, NICKNAME, CHANNEL_PASSWORD, MESSAGES)
+    bot = Bot(SERVER, CHANNEL, NICKNAME, CHANNEL_PASSWORD, MESSAGES, bot_is_verbose)
     bot.start()
