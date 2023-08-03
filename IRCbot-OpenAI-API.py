@@ -1,5 +1,5 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.29 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.30 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
 #
@@ -33,7 +33,7 @@ import openai
 # > config
 #
 # Specify the name of the config file
-config_filename = 'config.json'  # `config.json`` for English config
+config_filename = 'config_vittu.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
@@ -75,16 +75,28 @@ REPLY_DELAY_SECONDS = config['DEFAULT']['REPLY_DELAY_SECONDS']
 # ===============
 # Preset messages
 # ===============
-# Open them from `config.json` according to set language
-if LANGUAGE == 'ENGLISH':
+# Get the selected language from the "DEFAULT" section
+selected_language = config["DEFAULT"]["LANGUAGE"]
+
+# Select the appropriate messages based on the selected language
+if selected_language == 'ENGLISH':
     MESSAGES = config['MESSAGES']
-    EMOJI_DICT_FILE = config['EMOJI_DICT']['ENGLISH']
-elif LANGUAGE == 'FINNISH':
+elif selected_language == 'FINNISH':
     MESSAGES = config['MESSAGES_FI']
-    EMOJI_DICT_FILE = config['EMOJI_DICT']['FINNISH']
 else:
-    print(f'Error: Unknown language "{LANGUAGE}"')
+    print(f'Error: Unknown language "{selected_language}"')
     sys.exit(1)
+
+# MESSAGES
+MSG_RATE_LIMIT = MESSAGES["MSG_RATE_LIMIT"]
+MSG_NO_ADMIN_PRIV = MESSAGES["MSG_NO_ADMIN_PRIV"]
+MSG_INVALID_RATE_LIMIT = MESSAGES["MSG_INVALID_RATE_LIMIT"]
+MSG_RATE_LIMIT_SET = MESSAGES["MSG_RATE_LIMIT_SET"]
+MSG_INVALID_MUTE_SYNTAX = MESSAGES["MSG_INVALID_MUTE_SYNTAX"]
+MSG_NO_MUTE_PRIV = MESSAGES["MSG_NO_MUTE_PRIV"]
+MSG_MUTE_SUCCESS = MESSAGES["MSG_MUTE_SUCCESS"]
+MSG_NO_GOAWAY_PRIV = MESSAGES["MSG_NO_GOAWAY_PRIV"]
+MSG_GOAWAY_SUCCESS = MESSAGES["MSG_GOAWAY_SUCCESS"]
 
 # ===============
 # Admin settings
@@ -134,10 +146,8 @@ USE_EMOJI_DICT = config['DEFAULT']['USE_EMOJI_DICT']
 
 # Emoji replacement dictionary location
 if LANGUAGE == 'ENGLISH':
-    MESSAGES = config['MESSAGES']
     EMOJI_DICT_FILE = config['EMOJI_DICT']['ENGLISH']
 elif LANGUAGE == 'FINNISH':
-    MESSAGES = config['MESSAGES_FI']
     EMOJI_DICT_FILE = config['EMOJI_DICT']['FINNISH']
 else:
     print(f'Error: Unknown language "{LANGUAGE}"')
@@ -147,8 +157,6 @@ else:
 CONVERT_TO_LOWER = config['DEFAULT']['CONVERT_TO_LOWER']
 
 # API system message (sent to the bot as instructions)
-api_system_message =f"You're {NICKNAME}, an IRC bot. Answer within the limits of IRC message length (less than 400 character replies only). Your handle is {NICKNAME}, you are on {NETWORK}, on channel {CHANNEL}. Your admin's contact: {BOT_ADMIN_INFO}."
-
 api_system_message_template = config['DEFAULT']['api_system_message']
 api_system_message = api_system_message_template.format(NICKNAME=NICKNAME, NETWORK=NETWORK, CHANNEL=CHANNEL, BOT_ADMIN_INFO=BOT_ADMIN_INFO, SERVER=SERVER)
 
@@ -277,7 +285,7 @@ def split_message(message, max_bytes):
     return messages
 
 class Bot:
-    def __init__(self, server, channel, nickname, channel_password):
+    def __init__(self, server, channel, nickname, channel_password, messages):
         self.channel_password = channel_password     
         self.message_count = 0
         self.reactor = irc.client.Reactor()
@@ -527,5 +535,5 @@ class Bot:
         self.reactor.process_forever()
 
 if __name__ == "__main__":
-    bot = Bot(SERVER, CHANNEL, NICKNAME, CHANNEL_PASSWORD)
+    bot = Bot(SERVER, CHANNEL, NICKNAME, CHANNEL_PASSWORD, MESSAGES)
     bot.start()
