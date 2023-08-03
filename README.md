@@ -19,6 +19,10 @@ USE_EMOJI_DICT = True
 # Convert the first character of each sentence to lowercase? True = yes, False = no`
 CONVERT_TO_LOWER = True
 ```
+# Prerequisites
+- Python 3.8 or later, probably. Tested and running OK on Python 3.9.16
+- `openai`, `jaraco.stream` and `irc` PyPi packages
+- OpenAI API key (from [openai.com](https://openai.com))
 
 # Install
 
