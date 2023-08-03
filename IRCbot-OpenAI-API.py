@@ -1,5 +1,5 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.27 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.28 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
 #
@@ -47,6 +47,9 @@ except FileNotFoundError:
 except json.JSONDecodeError:
     print("Error: The config.json file is not a valid JSON file.")
     sys.exit(1)
+
+# Language of the bot; load configfile accordingly
+LANGUAGE = config['DEFAULT']['LANGUAGE']
 
 # the number of past interactions to remember
 MAX_TOKENS = config['DEFAULT']['MAX_TOKENS']
@@ -121,7 +124,15 @@ RESPOND_TO_ALL = config['DEFAULT']['RESPOND_TO_ALL']
 USE_EMOJI_DICT = config['DEFAULT']['USE_EMOJI_DICT']
 
 # Emoji replacement dictionary location
-EMOJI_DICT_FILE = config['DEFAULT']['EMOJI_DICT_FILE']
+if LANGUAGE == 'ENGLISH':
+    MESSAGES = config['MESSAGES']
+    EMOJI_DICT_FILE = config['EMOJI_DICT']['ENGLISH']
+elif LANGUAGE == 'FINNISH':
+    MESSAGES = config['MESSAGES_FI']
+    EMOJI_DICT_FILE = config['EMOJI_DICT']['FINNISH']
+else:
+    print(f'Error: Unknown language "{LANGUAGE}"')
+    sys.exit(1)
 
 # Convert the first character of each sentence to lowercase? True = yes, False = no
 CONVERT_TO_LOWER = config['DEFAULT']['CONVERT_TO_LOWER']
