@@ -1,5 +1,5 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.28 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.29 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
 #
@@ -33,7 +33,7 @@ import openai
 # > config
 #
 # Specify the name of the config file
-config_filename = 'config.json'  # `config.json`` for English config
+config_filename = 'config_fi.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
@@ -114,6 +114,9 @@ USERNAME = config['DEFAULT']['USERNAME']
 
 # the channel you want the bot to join to
 CHANNEL = config['DEFAULT']['CHANNEL']
+
+# the channel password (if the channel uses one)
+CHANNEL_PASSWORD = config['DEFAULT'].get('CHANNEL_PASSWORD')  # Use .get() to return None if the key doesn't exist
 
 # the IRC network in question, for chatbot's reference
 # (can be i.e. Freenode, EFnet, Undernet, QuakeNet, DALnet, IRCnet...)
@@ -274,7 +277,7 @@ def split_message(message, max_bytes):
     return messages
 
 class Bot:
-    def __init__(self, server, channel, nickname):
+    def __init__(self, server, channel, nickname, CHANNEL_PASSWORD):
         self.message_count = 0
         self.reactor = irc.client.Reactor()
         # self.reactor.server().errors = 'ignore'  # Ignore encoding errors; treat inbound text as-is
@@ -311,7 +314,11 @@ class Bot:
         # Print successful connection
         logging.info(f"Connected to: {self.server}")
 
-        self.connection.join(self.channel)
+        # Join the channel with the password if it's provided
+        if self.channel_password:
+            self.connection.join(self.channel, self.channel_password)
+        else:
+            self.connection.join(self.channel)
 
         # Print channel join information
         logging.info(f"Joining channel: {self.channel}")
