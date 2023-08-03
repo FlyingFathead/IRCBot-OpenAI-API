@@ -277,7 +277,8 @@ def split_message(message, max_bytes):
     return messages
 
 class Bot:
-    def __init__(self, server, channel, nickname, CHANNEL_PASSWORD):
+    def __init__(self, server, channel, nickname, channel_password):
+        self.channel_password = channel_password     
         self.message_count = 0
         self.reactor = irc.client.Reactor()
         # self.reactor.server().errors = 'ignore'  # Ignore encoding errors; treat inbound text as-is
@@ -526,5 +527,5 @@ class Bot:
         self.reactor.process_forever()
 
 if __name__ == "__main__":
-    bot = Bot(SERVER, CHANNEL, NICKNAME)
+    bot = Bot(SERVER, CHANNEL, NICKNAME, CHANNEL_PASSWORD)
     bot.start()
