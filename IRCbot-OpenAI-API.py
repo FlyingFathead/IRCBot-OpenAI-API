@@ -1,11 +1,21 @@
 # IRC-GPT2-Chatbot
-# by FlyingFathead & ChaosWhisperer | v0.26 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer | v0.27 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
+
+#
+# > imports
+#
 
 # time & logging
 from datetime import datetime, timedelta
 import time
 import logging
+import json
+import random
+
+# Read the configuration file
+with open('config.json', 'r') as f:
+    config = json.load(f)
 
 # irc bot libraries
 import irc.client
@@ -23,117 +33,122 @@ import os
 import random
 import openai
 
-MAX_TOKENS = 3096
-MAX_PAST_INTERACTIONS = 20  # the number of past interactions to remember
+#
+# > config
+#
+
+# Configuration: open our config file from `config.json`
+try:
+    with open('config.json') as config_file:
+        config = json.load(config_file)
+except FileNotFoundError:
+    print("Error: The config.json file was not found.")
+    sys.exit(1)
+except json.JSONDecodeError:
+    print("Error: The config.json file is not a valid JSON file.")
+    sys.exit(1)
+
+# the number of past interactions to remember
+MAX_TOKENS = config['DEFAULT']['MAX_TOKENS']
+
+# max past tokens
+MAX_PAST_INTERACTIONS = config['DEFAULT']['MAX_PAST_INTERACTIONS']
 
 # set debug mode True/False
 # not in use rn
-debug = True
-
-# Replace 'user_contexts' with 'chatroom_contexts'
-chatroom_contexts = {}
-
-# (for multi-user mode) Initialize an empty dictionary for each user's context
-user_contexts = {}
+debug = config['DEFAULT']['debug']
 
 # Set verbosity flag (True/False)
-bot_is_verbose = False
+bot_is_verbose = config['DEFAULT']['bot_is_verbose']
 
 # Time in seconds between each response
 # For example, a value of 60 would allow one response per minute
-RATE_LIMIT_SECONDS = 10
+RATE_LIMIT_SECONDS = config['DEFAULT']['RATE_LIMIT_SECONDS']
 
-# Time when the last response was sent
-last_response_time = datetime.now() - timedelta(days=1)  # Set to a day ago
-# last_response_time = datetime.now()
+# Probabilities for the bot to answer to the message. 1 = answer every time
+ANSWER_PROBABILITY = config['DEFAULT']['ANSWER_PROBABILITY']
 
 # ===============
 # Preset messages
 # ===============
-# Define messages (in English):
-MSG_RATE_LIMIT = "Sorry! I'm taking a break right now, try again later!"
-MSG_NO_ADMIN_PRIV = "Error: Sorry {}, but you don't have the privileges to control me!"
-MSG_INVALID_RATE_LIMIT = "Error: Invalid value for response rate limit. Usage: !ratelimit <seconds>"
-MSG_RATE_LIMIT_SET = "Response rate limit has been set to {} seconds by user {}."
-MSG_INVALID_MUTE_SYNTAX = "Error: Invalid mute message syntax. Usage: !mute <minutes>"
-MSG_NO_MUTE_PRIV = "Error: Apologies, dear {}, but you can't just silence me! You don't have the necessary privileges."
-MSG_MUTE_SUCCESS = "I'll be quiet for {} minutes at the request of user {}! Shh!"
-MSG_NO_GOAWAY_PRIV = "Error: Unfortunately, {}, you don't have the rights to send me away! No!"
-MSG_GOAWAY_SUCCESS = "Now it's time for me to go, I hope to see you again some day! 😢"
+# Define messages. English:
+# messages = config['MESSAGES']
 
-# Define messages (alternative, in Finnish):
-""" MSG_RATE_LIMIT = "Sori! Keke on nyt tauolla, koita myöhemmin uudelleen!"
-MSG_NO_ADMIN_PRIV = "Virhe: Sori vaan {}, mutta sulla ei ole oikeutta säädellä mua!"
-MSG_INVALID_RATE_LIMIT = "Virhe: Virheellinen arvo vastausten aikarajoituksille. Käyttöohje: !ratelimit <sekuntia>"
-MSG_RATE_LIMIT_SET = "Vastausten rajoitus asetettu {} sekuntiin käyttäjän {} toimesta."
-MSG_INVALID_MUTE_SYNTAX = "Virhe: epäkelpo mute-viestin syntaksi. Käyttöohje: !mute <minuuttia>"
-MSG_NO_MUTE_PRIV = "Virhe: Pahoitteluni, arvon {}, mutta minua et noin vaan hiljennä! Sinulla ei ole siihen tarvittavia oikeuksia."
-MSG_MUTE_SUCCESS = "ChatKeke on nyt vaiti {} minuuttia käyttäjän {} pyynnöstä! Tui tui!"
-MSG_NO_GOAWAY_PRIV = "Virhe: Valitettavasti, {} sinulla ei ole oikeuksia lähettää minua pois! Ni! "
-MSG_GOAWAY_SUCCESS = "Nyt minun on näköjään aika mennä, toivottavasti nähdään taas pian! 😢" """
+# Define messages. Finnish:
+messages = config['MESSAGES_FI']
 
 # ===============
 # Admin settings
 # ==============
 
 # List of admin nicknames that are allowed to mute the bot
-ADMIN_NICKNAMES = ["adminnick1", "adminnick2"]
-
-# Variable to hold the mute end time
-mute_end_time = None
+ADMIN_NICKNAMES = config['DEFAULT']['ADMIN_NICKNAMES']
 
 # ========================
 # IRC settings of your bot
 # ========================
 
 # your irc server's name/hostmask
-SERVER="<IRC server hostmask or ip>"
+SERVER = config['DEFAULT']['SERVER']
 
 # the IRC server port you want the bot to connect to
-PORT=6667
+PORT = config['DEFAULT']['PORT']
 
 # the nick you want the bot to use
-NICKNAME="AIbot"
+NICKNAME = config['DEFAULT']['NICKNAME']
 
 # the real name of the bot (displayed on /whois)
-REALNAME="Original ChatKeke[TM]. Powered by OpenAI API"
+REALNAME = config['DEFAULT']['REALNAME']
 
 # the username of the bot
-USERNAME="AIbot"
+USERNAME = config['DEFAULT']['USERNAME']
 
 # the channel you want the bot to join to
-CHANNEL="#OpenAI"
+CHANNEL = config['DEFAULT']['CHANNEL']
 
 # the IRC network in question, for chatbot's reference
 # (can be i.e. Freenode, EFnet, Undernet, QuakeNet, DALnet, IRCnet...)
-NETWORK="EFnet" 
+NETWORK = config['DEFAULT']['NETWORK']
 
 # The nickname and/or contact details of the bot's admin
-BOT_ADMIN_INFO = "<ADMIN'S NICKNAME / BOT OWNER INFO>"
+BOT_ADMIN_INFO = config['DEFAULT']['BOT_ADMIN_INFO']
+
+# Respond to all messages, or only when the bot is addressed?
+# If True, the bot will respond to all messages. If False, it will only respond to messages that start with its nickname.
+RESPOND_TO_ALL = config['DEFAULT']['RESPOND_TO_ALL']
+
+# Replace unicode emojis with ASCII? True = yes, False = no
+USE_EMOJI_DICT = config['DEFAULT']['USE_EMOJI_DICT']
+
+# Emoji replacement dictionary location
+EMOJI_DICT_FILE = config['DEFAULT']['EMOJI_DICT_FILE']
+
+# Convert the first character of each sentence to lowercase? True = yes, False = no
+CONVERT_TO_LOWER = config['DEFAULT']['CONVERT_TO_LOWER']
 
 # API system message (sent to the bot as instructions)
 api_system_message =f"You're {NICKNAME}, an IRC bot. Answer within the limits of IRC message length (less than 400 character replies only). Your handle is {NICKNAME}, you are on {NETWORK}, on channel {CHANNEL}. Your admin's contact: {BOT_ADMIN_INFO}."
 
-# Respond to all messages, or only when the bot is addressed?
-# If True, the bot will respond to all messages. If False, it will only respond to messages that start with its nickname.
-RESPOND_TO_ALL = True
+api_system_message_template = config['DEFAULT']['api_system_message']
+api_system_message = api_system_message_template.format(NICKNAME=NICKNAME, NETWORK=NETWORK, CHANNEL=CHANNEL, BOT_ADMIN_INFO=BOT_ADMIN_INFO)
 
-# Replace unicode emojis with ASCII? True = yes, False = no
-USE_EMOJI_DICT = True
-
-# Emoji replacement dictionary location
-# Finnish emoji replacement dictionary
-# EMOJI_DICT_FILE = './emoji_dict_finnish.txt'
-
-# English emoji replacement dictionary
-EMOJI_DICT_FILE = './emoji_dict.txt'
-
-# Convert the first character of each sentence to lowercase? True = yes, False = no
-CONVERT_TO_LOWER = True
-
+# ~~~
 #
 # > let's roll
 #
+
+# Variable to hold the mute end time
+mute_end_time = None
+
+# Time when the last response was sent
+last_response_time = datetime.now() - timedelta(days=1)  # Set to a day ago
+# last_response_time = datetime.now()
+
+# Replace 'user_contexts' with 'chatroom_contexts'
+chatroom_contexts = {}
+
+# (for multi-user mode) Initialize an empty dictionary for each user's context
+user_contexts = {}
 
 # API key reading
 # First, try to get the API key from an environment variable
@@ -198,14 +213,31 @@ logging_format = '[{now}][{levelname}] {message}'
 logging.basicConfig(format=logging_format, style='{', level=logging.INFO)
 logging.getLogger().handlers[0].formatter = CustomFormatter(logging_format, style='{')
 
-# split messages that are too long
-#def split_message(message, max_length):
-#    return [message[i:i+max_length] for i in range(0, len(message), max_length)]
+""" # split messages that are too long
+def split_message(message, max_length):
+    return [message[i:i+max_length] for i in range(0, len(message), max_length)] """
 
 """ def split_message(message, max_length):
     # Subtract the length of other parts of the IRC message from max_length
     max_length -= len("PRIVMSG {} :".format(CHANNEL)) + len("\r\n") + len(NICKNAME)
     return [message[i:i+max_length] for i in range(0, len(message), max_length)] """
+
+""" def split_message(message, max_bytes):
+    messages = []
+    current_message = ""
+    current_bytes = 0
+    for word in message.split():
+        word_bytes = len(word.encode('utf-8'))
+        if current_bytes + word_bytes < max_bytes:
+            current_message += word + " "
+            current_bytes += word_bytes
+        else:
+            messages.append(current_message.strip())  # strip trailing spaces
+            current_message = word + " "
+            current_bytes = word_bytes
+    if current_message:
+        messages.append(current_message.strip())  # strip trailing spaces
+    return messages """
 
 def split_message(message, max_bytes):
     messages = []
@@ -217,11 +249,11 @@ def split_message(message, max_bytes):
             current_message += word + " "
             current_bytes += word_bytes
         else:
-            messages.append(current_message)
+            messages.append(current_message.strip())  # strip trailing spaces
             current_message = word + " "
             current_bytes = word_bytes
     if current_message:
-        messages.append(current_message)
+        messages.append(current_message.strip())  # strip trailing spaces
     return messages
 
 class Bot:
@@ -272,6 +304,7 @@ class Bot:
     
     def on_connect(self, connection, event):
     # Join the channel after the connection is established
+        print("[INFO] Connection to server established. Joining channel.")
         self.connection.join(self.channel)
 
     def on_pubmsg(self, connection, event):
@@ -348,19 +381,31 @@ class Bot:
                 if datetime.now() - last_response_time >= timedelta(seconds=RATE_LIMIT_SECONDS):
                     print("Bot can send a message based on rate limit")
                     print("Checking if bot should respond to all messages")
+
                     # If RESPOND_TO_ALL is True, respond to all messages.
                     if RESPOND_TO_ALL:
-                        formatted_input = f"<{timestamp}> <{sender_username}> {self.nickname}: {input_text}"
-                        print("Bot should respond to all messages")
-                        response = self.interact_model(self, input_text, sender_username, formatted_input)
-                        print(f"Response from interact_model: {response}")
-                        response_parts = split_message(response, 512)  # Split the response into parts
-                        print(f"Response parts: {response_parts}")
-                        for part in response_parts:
-                            self.connection.privmsg(self.channel, part)
-                            print(f"Sent message part: {part}")
-                        last_response_time = datetime.now()  # Update the last response time
-                        print("Rate limit has expired. Answering to messages again...")  # Console message for rate limit expiration
+
+                        # Add the following check for ANSWER_PROBABILITY
+                        if random.random() < ANSWER_PROBABILITY:
+
+                            formatted_input = f"<{timestamp}> <{sender_username}> {self.nickname}: {input_text}"
+                            print("Bot should respond to all messages")
+                            response = self.interact_model(self, input_text, sender_username, formatted_input)
+                            print(f"Response from interact_model: {response}")
+                            
+                            # response_parts = split_message(response, 500)  # Split the response into parts
+
+                            max_bytes = 500 - len('PRIVMSG') - len(self.channel) - len(':') - 2
+                            response_parts = split_message(response, max_bytes)
+
+
+                            print(f"Response parts: {response_parts}")
+                            for part in response_parts:
+                                self.connection.privmsg(self.channel, part)
+                                print(f"Sent message part: {part}")
+                            last_response_time = datetime.now()  # Update the last response time
+                            print("Rate limit has expired. Answering to messages again...")  # Console message for rate limit expiration
+                    
                     # If RESPOND_TO_ALL is False, only respond to messages that start with the bot's nickname.
                     elif input_text.startswith(self.nickname + ":"):
                         print("Bot should respond only to messages that start with its name")
