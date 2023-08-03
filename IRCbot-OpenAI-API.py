@@ -74,11 +74,16 @@ ANSWER_PROBABILITY = config['DEFAULT']['ANSWER_PROBABILITY']
 # ===============
 # Preset messages
 # ===============
-# Define messages. English:
-# messages = config['MESSAGES']
-
-# Define messages. Finnish:
-messages = config['MESSAGES_FI']
+# Open them from `config.json` according to set language
+if LANGUAGE == 'ENGLISH':
+    MESSAGES = config['MESSAGES']
+    EMOJI_DICT_FILE = config['EMOJI_DICT']['ENGLISH']
+elif LANGUAGE == 'FINNISH':
+    MESSAGES = config['MESSAGES_FI']
+    EMOJI_DICT_FILE = config['EMOJI_DICT']['FINNISH']
+else:
+    print(f'Error: Unknown language "{LANGUAGE}"')
+    sys.exit(1)
 
 # ===============
 # Admin settings
