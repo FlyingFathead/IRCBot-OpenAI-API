@@ -4,6 +4,8 @@ Python-based simple IRC (intenet relay chat) chatroom bot that uses OpenAI API (
 Hey, buddy! Wanna shove that GPT-3.5 or GPT-4 OpenAI API into good'ole IRC as a chatbot? Now it's possible!
 
 # What's new
+`Aug 3, 2023 (v.028)`: all config now handled via `config.json`, edit that to configure the bot. Language settings also apply to the bot's output language, so no need to change everything manually anymore. New variable, `ANSWER_PROBABILITY` sets the likelihood for the bot answering when in public mode.
+
 `Aug 3, 2023 (v.025)`: Added some increased parsing functionalities, such as utf-8/unciode emoji to ASCII conversion tables (where utf8-emojis are not supported or wanted) and a lowercase converter to make the bot "fit" better into an IRC channel's output style.
 
 New functions:
