@@ -33,7 +33,7 @@ import openai
 # > config
 #
 # Specify the name of the config file
-config_filename = 'config_fi.json'  # `config.json`` for English config
+config_filename = 'config.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
@@ -343,7 +343,7 @@ class Bot:
             input_text = event.arguments[0]
             sender_username = event.source.nick  # Get the sender's username from the IRC event            
             formatted_input = f"<{timestamp}> <{sender_username}> {self.nickname}: {input_text}"
-            print(formatted_input)
+            # print(formatted_input)
 
             # Handle rate limit command
             if input_text.startswith("!ratelimit"):
