@@ -1,4 +1,4 @@
-# IRC-GPT2-Chatbot
+# IRC chatbot for OpenAI API (GPT-3.5, GPT-4...)
 # by FlyingFathead & ChaosWhisperer | v0.30 | 03/AUG/2023
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
