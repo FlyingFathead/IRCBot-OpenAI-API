@@ -21,6 +21,10 @@
       "MAX_PAST_INTERACTIONS": 20,
       "api_system_message": "You're {NICKNAME}, an IRC bot. Answer within the limits of IRC message length (less than 400 character replies only). Your handle is {NICKNAME}, you are on {NETWORK}, on channel {CHANNEL}. Your admin's contact: {BOT_ADMIN_INFO}."
     },
+    "EMOJI_DICT": {
+        "ENGLISH": "./emoji_dict.txt",
+        "FINNISH": "./emoji_dict_finnish.txt"
+    },
     "MESSAGES": {
       "MSG_RATE_LIMIT": "Sorry! I'm taking a break right now, try again later!",
       "MSG_NO_ADMIN_PRIV": "Error: Sorry {}, but you don't have the privileges to control me!",
