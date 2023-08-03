@@ -1,0 +1,47 @@
+{
+    "DEFAULT": {
+      "debug": true,
+      "bot_is_verbose": false,
+      "RATE_LIMIT_SECONDS": 10,
+      "ANSWER_PROBABILITY": 0.5,    
+      "ADMIN_NICKNAMES": ["adminnick1","adminnick2"],
+      "SERVER": "<IRC server hostmask or ip to connect to>",
+      "PORT": 6667,
+      "NICKNAME": "AIbot",
+      "REALNAME": "Original ChatKeke[TM]. Powered by OpenAI API",
+      "USERNAME": "AIbot",
+      "CHANNEL": "#OpenAI",
+      "NETWORK": "EFnet",
+      "BOT_ADMIN_INFO": "<ADMIN'S NICKNAME / BOT OWNER INFO>",
+      "RESPOND_TO_ALL": true,
+      "USE_EMOJI_DICT": true,
+      "EMOJI_DICT_FILE": "./emoji_dict.txt",
+      "CONVERT_TO_LOWER": true,
+      "MAX_TOKENS": 3096,
+      "MAX_PAST_INTERACTIONS": 20,
+      "api_system_message": "You're {NICKNAME}, an IRC bot. Answer within the limits of IRC message length (less than 400 character replies only). Your handle is {NICKNAME}, you are on {NETWORK}, on channel {CHANNEL}. Your admin's contact: {BOT_ADMIN_INFO}."
+    },
+    "MESSAGES": {
+      "MSG_RATE_LIMIT": "Sorry! I'm taking a break right now, try again later!",
+      "MSG_NO_ADMIN_PRIV": "Error: Sorry {}, but you don't have the privileges to control me!",
+      "MSG_INVALID_RATE_LIMIT": "Error: Invalid value for response rate limit. Usage: !ratelimit <seconds>",
+      "MSG_RATE_LIMIT_SET": "Response rate limit has been set to {} seconds by user {}.",
+      "MSG_INVALID_MUTE_SYNTAX": "Error: Invalid mute message syntax. Usage: !mute <minutes>",
+      "MSG_NO_MUTE_PRIV": "Error: Apologies, dear {}, but you can't just silence me! You don't have the necessary privileges.",
+      "MSG_MUTE_SUCCESS": "I'll be quiet for {} minutes at the request of user {}! Shh!",
+      "MSG_NO_GOAWAY_PRIV": "Error: Unfortunately, {}, you don't have the rights to send me away! No!",
+      "MSG_GOAWAY_SUCCESS": "Now it's time for me to go, I hope to see you again some day! 😢"
+    },
+    "MESSAGES_FI": {
+        "MSG_RATE_LIMIT": "Sori! Keke on nyt tauolla, koita myöhemmin uudelleen!",
+        "MSG_NO_ADMIN_PRIV": "Virhe: Sori vaan {}, mutta sulla ei ole oikeutta säädellä mua!",
+        "MSG_INVALID_RATE_LIMIT": "Virhe: Virheellinen arvo vastausten aikarajoituksille. Käyttöohje: !ratelimit <sekuntia>",
+        "MSG_RATE_LIMIT_SET": "Vastausten rajoitus asetettu {} sekuntiin käyttäjän {} toimesta.",
+        "MSG_INVALID_MUTE_SYNTAX": "Virhe: epäkelpo mute-viestin syntaksi. Käyttöohje: !mute <minuuttia>",
+        "MSG_NO_MUTE_PRIV": "Virhe: Pahoitteluni, arvon {}, mutta minua et noin vaan hiljennä! Sinulla ei ole siihen tarvittavia oikeuksia.",
+        "MSG_MUTE_SUCCESS": "ChatKeke on nyt vaiti {} minuuttia käyttäjän {} pyynnöstä! Tui tui!",
+        "MSG_NO_GOAWAY_PRIV": "Virhe: Valitettavasti, {} sinulla ei ole oikeuksia lähettää minua pois! Ni!",
+        "MSG_GOAWAY_SUCCESS": "Nyt minun on näköjään aika mennä, toivottavasti nähdään taas pian! 😢"
+      }
+  }
+  
