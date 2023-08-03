@@ -6,6 +6,16 @@ Hey, buddy! Wanna shove that GPT-3.5 or GPT-4 OpenAI API into good'ole IRC as a 
 # What's new
 `Aug 3, 2023 (v.025)`: Added some increased parsing functionalities, such as utf-8/unciode emoji to ASCII conversion tables (where utf8-emojis are not supported or wanted) and a lowercase converter to make the bot "fit" better into an IRC channel's output style.
 
+New functions:
+```
+# Replace unicode emojis with ASCII? True = yes, False = no
+USE_EMOJI_DICT = True
+```
+```
+# Convert the first character of each sentence to lowercase? True = yes, False = no`
+CONVERT_TO_LOWER = True
+```
+
 # Install
 
 1. Install the required packages with `pip install -r requirements.txt`
