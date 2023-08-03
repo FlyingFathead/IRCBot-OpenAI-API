@@ -13,6 +13,7 @@
       "USERNAME": "AIbot",
       "CHANNEL": "#OpenAI",
       "NETWORK": "EFnet",
+      "REPLY_DELAY_SECONDS": 8,   
       "BOT_ADMIN_INFO": "<ADMIN'S NICKNAME / BOT OWNER INFO>",
       "RESPOND_TO_ALL": true,
       "USE_EMOJI_DICT": true,
