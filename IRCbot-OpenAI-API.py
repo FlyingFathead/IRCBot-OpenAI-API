@@ -33,16 +33,18 @@ import openai
 #
 # > config
 #
+# Specify the name of the config file
+config_filename = 'config.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
-    with open('config.json') as config_file:
+    with open(config_filename) as config_file:
         config = json.load(config_file)
 except FileNotFoundError:
-    print("Error: The config.json file was not found.")
+    print(f"Error: The {config_filename} file was not found.")
     sys.exit(1)
 except json.JSONDecodeError:
-    print("Error: The config.json file is not a valid JSON file.")
+    print(f"Error: The {config_filename} file is not a valid JSON file.")
     sys.exit(1)
 
 # Language of the bot; load configfile accordingly
