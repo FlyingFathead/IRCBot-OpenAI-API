@@ -4,9 +4,9 @@ Python-based simple IRC (intenet relay chat) chatroom bot that uses OpenAI API (
 Hey, buddy! Wanna shove that GPT-3.5 or GPT-4 OpenAI API into good'ole IRC as a chatbot? Now it's possible!
 
 # What's new
-`Aug 3, 2023 (v.031)`: Bot now takes in admin messages as `/msg bot !command <options>` if it needs to be adjusted on the fly
+`Aug 3, 2023 (v.031)`: Bot now takes in admin messages as `/msg bot !command <options>` if it needs to be adjusted on the fly. Acknowledgements of bot commands come into the private msg's if you're an admin.
 
-`Aug 3, 2023 (v.029)`: Bot now supports password protected channels (i.e. to prevent public abuse).
+`Aug 3, 2023 (v.029)`: Bot now supports joining password protected channels (i.e. to prevent abuse).
 
 `Aug 3, 2023 (v.028)`: all config now handled via `config.json`, edit that to configure the bot. Language settings also apply to the bot's output language, so no need to change everything manually anymore. New variable, `ANSWER_PROBABILITY` sets the likelihood for the bot answering when in public mode.
 
@@ -30,10 +30,10 @@ CONVERT_TO_LOWER = True
 
 1. Install the required packages with `pip install -r requirements.txt`
 2. Crank your OpenAI access token into either an environment variable or into `api_token.txt` within the same directory.
-3. Edit the Python file for your bot configuration. Set up things such as admin nicks etc. Change what you don't fancy into your liking.
+3. Edit the `config.json` for your bot configuration. Set up things such as admin nicks, your bot's details, other options etc. Change whatever you deem necessary.
 4. Launch `python IRCbot-OpenAI-API.py` and off you go!
 
-The bot has a chat history memory but only does API calls whenever it's addressed with lines starting with the bot's nick with a  : , so that it's not babbling with replies to every single thing that's being said. You "might" want to rate limit it on bigger channels.
+The bot has a chat history memory that you can adjust in `config.json`, the `RESPOND_TO_ALL` switch set to `true` makes the bot answer to everyone on the channel, with it set to `false`, the bot only answers to people "talking to it" (with lines starting with `<botname>:`). Rate limit adjustments are extremely handy for that, use either `!ratelimit <seconds>` on the channel or as admin, `/msg <bot> !rametlimit <seconds>`.
 
 More options & functionalities, such as token counting and improved rate limiting + fallback methods are WIP.
 
