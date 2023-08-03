@@ -12,8 +12,9 @@
       "REALNAME": "Original ChatKeke[TM]. Powered by OpenAI API",
       "USERNAME": "AIbot",
       "CHANNEL": "#OpenAI",
+      "CHANNEL_PASSWORD": "",      
       "NETWORK": "EFnet",
-      "REPLY_DELAY_SECONDS": 8,   
+      "REPLY_DELAY_SECONDS": 5,   
       "BOT_ADMIN_INFO": "<ADMIN'S NICKNAME / BOT OWNER INFO>",
       "RESPOND_TO_ALL": true,
       "USE_EMOJI_DICT": true,
@@ -47,6 +48,5 @@
         "MSG_MUTE_SUCCESS": "ChatKeke on nyt vaiti {} minuuttia käyttäjän {} pyynnöstä! Tui tui!",
         "MSG_NO_GOAWAY_PRIV": "Virhe: Valitettavasti, {} sinulla ei ole oikeuksia lähettää minua pois! Ni!",
         "MSG_GOAWAY_SUCCESS": "Nyt minun on näköjään aika mennä, toivottavasti nähdään taas pian! 😢"
-      }
-  }
-  
+    }
+}
