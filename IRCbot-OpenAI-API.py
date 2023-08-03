@@ -13,7 +13,6 @@ import logging
 import json
 import random
 
-
 # irc bot libraries
 import irc.client
 import irc.events
@@ -34,7 +33,7 @@ import openai
 # > config
 #
 # Specify the name of the config file
-config_filename = 'config.json'  # `config.json`` for English config
+config_filename = 'config_fi.json'  # `config.json`` for English config
 
 # Configuration: open our config file from `config.json`
 try:
@@ -69,6 +68,9 @@ RATE_LIMIT_SECONDS = config['DEFAULT']['RATE_LIMIT_SECONDS']
 
 # Probabilities for the bot to answer to the message. 1 = answer every time
 ANSWER_PROBABILITY = config['DEFAULT']['ANSWER_PROBABILITY']
+
+# Load the reply delay from the config file
+REPLY_DELAY_SECONDS = config['DEFAULT']['REPLY_DELAY_SECONDS']
 
 # ===============
 # Preset messages
@@ -145,7 +147,7 @@ CONVERT_TO_LOWER = config['DEFAULT']['CONVERT_TO_LOWER']
 api_system_message =f"You're {NICKNAME}, an IRC bot. Answer within the limits of IRC message length (less than 400 character replies only). Your handle is {NICKNAME}, you are on {NETWORK}, on channel {CHANNEL}. Your admin's contact: {BOT_ADMIN_INFO}."
 
 api_system_message_template = config['DEFAULT']['api_system_message']
-api_system_message = api_system_message_template.format(NICKNAME=NICKNAME, NETWORK=NETWORK, CHANNEL=CHANNEL, BOT_ADMIN_INFO=BOT_ADMIN_INFO)
+api_system_message = api_system_message_template.format(NICKNAME=NICKNAME, NETWORK=NETWORK, CHANNEL=CHANNEL, BOT_ADMIN_INFO=BOT_ADMIN_INFO, SERVER=SERVER)
 
 # ~~~
 #
@@ -415,6 +417,7 @@ class Bot:
 
 
                             print(f"Response parts: {response_parts}")
+                            time.sleep(REPLY_DELAY_SECONDS)  # Pause for a set number of seconds before sending the message
                             for part in response_parts:
                                 self.connection.privmsg(self.channel, part)
                                 print(f"Sent message part: {part}")
