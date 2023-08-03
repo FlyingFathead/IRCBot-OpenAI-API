@@ -1,5 +1,6 @@
 {
     "DEFAULT": {
+      "LANGUAGE": "ENGLISH",        
       "debug": true,
       "bot_is_verbose": false,
       "RATE_LIMIT_SECONDS": 10,
@@ -15,7 +16,6 @@
       "BOT_ADMIN_INFO": "<ADMIN'S NICKNAME / BOT OWNER INFO>",
       "RESPOND_TO_ALL": true,
       "USE_EMOJI_DICT": true,
-      "EMOJI_DICT_FILE": "./emoji_dict.txt",
       "CONVERT_TO_LOWER": true,
       "MAX_TOKENS": 3096,
       "MAX_PAST_INTERACTIONS": 20,
