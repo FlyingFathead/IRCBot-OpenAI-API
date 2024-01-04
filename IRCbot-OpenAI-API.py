@@ -187,7 +187,7 @@ if not api_key:
             if not api_key:
                 raise ValueError("API token file is empty")
     except FileNotFoundError:
-        print("Error: OPENAI_API_KEY not set as an environment variable and api_token.txt file not found.")
+        print("Error: OPENAI_API_KEY not set as an environment variable and `api_token.txt` file not found. Please set either one with your OpenAI API token in it.")
         sys.exit(1)
     except ValueError as e:
         print(f"Error: {e}")
