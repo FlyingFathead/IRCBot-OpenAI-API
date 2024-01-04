@@ -6,7 +6,7 @@
 # by FlyingFathead & ChaosWhisperer
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
-version_number = "0.32"
+version_number = "0.32.1"
 
 #   =======
 # > imports
@@ -180,18 +180,18 @@ api_key = None
 api_key = os.getenv('OPENAI_API_KEY')
 
 # If the environment variable is not set, try to read the key from a file
-if api_key is None:
+if not api_key:
     try:
         with open('api_token.txt', 'r') as file:
             api_key = file.read().strip()
+            if not api_key:
+                raise ValueError("API token file is empty")
     except FileNotFoundError:
-        print("Error: The OPENAI_API_KEY environment variable is not set, and api_token.txt was not found. Please set the environment variable or create this file with your OpenAI API key.")
+        print("Error: OPENAI_API_KEY not set as an environment variable and api_token.txt file not found.")
         sys.exit(1)
-
-# If the key is still None at this point, neither method was successful
-if api_key is None:
-    print("Error: Failed to obtain OpenAI API key. Please set the OPENAI_API_KEY environment variable or create a file named api_token.txt with your OpenAI API key.")
-    sys.exit(1)
+    except ValueError as e:
+        print(f"Error: {e}")
+        sys.exit(1)
 
 # Now initialize the OpenAI client with the API key
 client = OpenAI(api_key=api_key)
