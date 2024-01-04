@@ -23,8 +23,9 @@ USE_EMOJI_DICT = True
 CONVERT_TO_LOWER = True
 ```
 # Prerequisites
-- At least Python 3.8 or later, probably. Tested and running OK on Python `3.9.16` and `3.10.12`.
-- `openai`, `jaraco.stream` and `irc` PyPi packages, tested to work on these:
+- At least Python 3.8 or later, probably. 
+- Tested and running OK on Python `3.9.16` and `3.10.12`.
+- `openai`, `jaraco.stream` and `irc` PyPi packages, tested to work on these versions:
 ```
 openai==1.6.1
 jaraco.stream==3.0.3
