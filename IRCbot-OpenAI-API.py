@@ -6,7 +6,7 @@
 # by FlyingFathead & ChaosWhisperer
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
 
-version_number = "0.32.1"
+version_number = "0.32.2"
 
 #   =======
 # > imports
@@ -550,8 +550,25 @@ class Bot:
                 output_text_clean = output_text.split("> ", 2)[-1]  # splits at the second '>'
                 output_text_clean = output_text_clean.strip()  # remove leading and trailing whitespace
 
-            # Example of processing the output as plain text
-            # output_text_clean = model_output.strip()
+            # Try to split the response safely
+            parts = output_text_clean.split(">", 1)
+            if len(parts) >= 2:
+                metadata = parts[0] + ">"
+                message = parts[1].strip()
+            else:
+                metadata = ""
+                message = output_text_clean
+
+            # Convert the first character of each sentence in the message to lowercase
+            if CONVERT_TO_LOWER:
+                print(f"'CONVERT_TO_LOWER' set to 'true' - converting to lowercase: {message}")
+                sentences = re.split('([.!?] )', message)
+                sentences = [sentence[0].lower() + sentence[1:] if sentence else '' for sentence in sentences]
+                message = "".join(sentences)
+                print(f"Message after lowercase conversion: {message}")
+
+            # Reassemble the full response
+            output_text_clean = metadata + " " + message
 
             # Add the cleaned output_text to the conversation history
             conversation_history.append(f"<{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}> <{NICKNAME}> {output_text_clean}")
@@ -559,21 +576,12 @@ class Bot:
             # Update the chatroom's conversation history in chatroom_contexts
             chatroom_contexts[bot.channel] = conversation_history
 
-            """ # Add the cleaned output_text to the conversation history
-            conversation_history.append(f"<{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}> <{NICKNAME}> {output_text_clean}")
-
-            # Update the chatroom's conversation history in chatroom_contexts
-            chatroom_contexts[bot.channel] = conversation_history """
-
-            # convert sentence breaks to lowercase
-            if CONVERT_TO_LOWER:
-                sentences = re.split('([.!?] )', output_text_clean)
-                sentences = [sentence[0].lower() + sentence[1:] if sentence else '' for sentence in sentences]
-                output_text_clean = "".join(sentences)
-
-            # Remove newline and carriage return characters
             # IMPORTANT: these are pretty much mandatory; otherwise the client will crash.
-            return output_text_clean.replace("\n", " ").replace("\r", " ")
+            # Remove newline and carriage return characters
+            output_text_clean = output_text_clean.replace("\n", " ").replace("\r", " ")
+
+            # Returning the processed output text
+            return output_text_clean
 
         except AttributeError:
             print("Error: Unable to access response data. Please check the API documentation for correct usage.")

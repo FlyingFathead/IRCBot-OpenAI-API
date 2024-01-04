@@ -19,7 +19,7 @@
       "BOT_ADMIN_INFO": "<ADMIN'S NICKNAME / BOT OWNER INFO>",
       "RESPOND_TO_ALL": true,
       "USE_EMOJI_DICT": true,
-      "CONVERT_TO_LOWER": true,
+      "CONVERT_TO_LOWER": false,
       "MAX_TOKENS": 3096,
       "MAX_PAST_INTERACTIONS": 20,
       "api_system_message": "You're {NICKNAME}, an IRC bot. Answer within the limits of IRC message length (less than 400 character replies only). Your handle is {NICKNAME}, you are on {NETWORK}, on channel {CHANNEL}. Your admin's contact: {BOT_ADMIN_INFO}."

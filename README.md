@@ -6,16 +6,12 @@ Runs on `openai` library version `1.6.1` (up to date in January 2024!)
 Wanna shove that GPT-3.5 or GPT-4 OpenAI API into good'ole IRC as a chatbot? Now it's possible!
 
 # What's new
-
-`v0.32`: (Jan 4, 2024) OpenAI API calls have been updated to use the `1.6.1` version of `openai` pip library. Multiple smaller bugfixes.
-
-`v0.31`: (Aug 3, 2023) Bot now takes in admin messages as `/msg bot !command <options>` if it needs to be adjusted on the fly. Acknowledgements of bot commands come into the private msg's if you're an admin.
-
-`v0.29`: (Aug 3, 2023) Bot now supports joining password protected channels (i.e. to prevent abuse).
-
-`v0.28`: (Aug 3, 2023) all config now handled via `config.json`, edit that to configure the bot. Language settings also apply to the bot's output language, so no need to change everything manually anymore. New variable, `ANSWER_PROBABILITY` sets the likelihood for the bot answering when in public mode.
-
-`v0.25`: (Aug 3, 2023) Added some increased parsing functionalities, such as utf-8/unciode emoji to ASCII conversion tables (where utf8-emojis are not supported or wanted) and a lowercase converter to make the bot "fit" better into an IRC channel's output style.
+- `v0.32.2` (Jan 4, 2024) Lowercase conversion flag & other small fixes.
+- `v0.32`: (Jan 4, 2024) OpenAI API calls have been updated to use the `1.6.1` version of `openai` pip library. Multiple smaller bugfixes.
+- `v0.31`: (Aug 3, 2023) Bot now takes in admin messages as `/msg bot !command <options>` if it needs to be adjusted on the fly. Acknowledgements of bot commands come into the private msg's if you're an admin.
+- `v0.29`: (Aug 3, 2023) Bot now supports joining password protected channels (i.e. to prevent abuse).
+- `v0.28`: (Aug 3, 2023) all config now handled via `config.json`, edit that to configure the bot. Language settings also apply to the bot's output language, so no need to change everything manually anymore. New variable, `ANSWER_PROBABILITY` sets the likelihood for the bot answering when in public mode.
+- `v0.25`: (Aug 3, 2023) Added some increased parsing functionalities, such as utf-8/unciode emoji to ASCII conversion tables (where utf8-emojis are not supported or wanted) and a lowercase converter to make the bot "fit" better into an IRC channel's output style.
 
 New functions:
 ```
