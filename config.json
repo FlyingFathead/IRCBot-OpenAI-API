@@ -10,7 +10,7 @@
       "SERVER": "<IRC server hostmask or ip to connect to>",
       "PORT": 6667,
       "NICKNAME": "AIbot",
-      "REALNAME": "Original ChatKeke[TM]. Powered by OpenAI API",
+      "REALNAME": "IRC chatbot, powered by OpenAI API",
       "USERNAME": "AIbot",
       "CHANNEL": "#OpenAI",
       "CHANNEL_PASSWORD": "",
