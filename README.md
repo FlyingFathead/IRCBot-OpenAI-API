@@ -35,11 +35,13 @@ irc==20.3.1
 - You will also need an OpenAI API key from [openai.com](https://openai.com).
 
 # Install
-
-1. Install the required packages with `pip install -r requirements.txt`
-2. Crank your OpenAI access token into either an environment variable or into `api_token.txt` within the same directory.
-3. Edit the `config.json` for your bot configuration. Set up things such as admin nicks, your bot's details, other options etc. Change whatever you deem necessary.
-4. Launch `python IRCbot-OpenAI-API.py` and off you go!
+1. Clone the repository: `git clone https://github.com/FlyingFathead/IRCBot-OpenAI-API`
+2. Switch to the directory: `cd IRCBot-OpenAI-API`
+3. Install the required packages: `pip install -r requirements.txt`
+4. Crank your OpenAI access token into either an environment variable or into `api_token.txt` within the same directory.
+5. Edit the `config.json` for your bot configuration. Set up things such as admin nicks, your bot's details, other options etc. Change whatever you deem necessary.
+6. Launch `python IRCbot-OpenAI-API.py` and off you go!
+7. Enjoy!
 
 The bot has a chat history memory that you can adjust in `config.json`, the `RESPOND_TO_ALL` switch set to `true` makes the bot answer to everyone on the channel, with it set to `false`, the bot only answers to people "talking to it" (with lines starting with `<botname>:`). Rate limit adjustments are extremely handy for that, use either `!ratelimit <seconds>` on the channel or as admin, `/msg <bot> !rametlimit <seconds>`.
 
