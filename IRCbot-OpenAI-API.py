@@ -3,8 +3,10 @@
 # NOTE: You will need the OpenAI API key to run this as-is!
 # Please get your API key from: https://openai.com/
 # ===
-# by FlyingFathead & ChaosWhisperer | v0.30 | 03/AUG/2023
+# by FlyingFathead & ChaosWhisperer
 # https://github.com/FlyingFathead/IRCBot-OpenAI-API/
+
+version_number = "0.32"
 
 #   =======
 # > imports
@@ -31,14 +33,14 @@ import json, os, string, sys, threading, logging, time
 import re
 import os
 import random
-import openai
+from openai import OpenAI
 
 #   ======
 # > config
 #   ======
 
 # Specify the name of the config file
-config_filename = 'config_fi.json'  # `config.json`` for English config
+config_filename = 'config.json'  # `config.json`` for English config, you can specify your own...
 
 # Configuration: open our config file from `config.json`
 try:
@@ -53,6 +55,9 @@ except json.JSONDecodeError:
 
 # Language of the bot; load configfile accordingly
 LANGUAGE = config['DEFAULT']['LANGUAGE']
+
+# the openai model to use
+OPENAI_MODEL = config['DEFAULT']['OPENAI_MODEL']
 
 # the number of past interactions to remember
 MAX_TOKENS = config['DEFAULT']['MAX_TOKENS']
@@ -165,6 +170,32 @@ CONVERT_TO_LOWER = config['DEFAULT']['CONVERT_TO_LOWER']
 api_system_message_template = config['DEFAULT']['api_system_message']
 api_system_message = api_system_message_template.format(NICKNAME=NICKNAME, NETWORK=NETWORK, CHANNEL=CHANNEL, BOT_ADMIN_INFO=BOT_ADMIN_INFO, SERVER=SERVER)
 
+# ===============
+# API key reading
+# ===============
+# Initialize variables
+api_key = None
+
+# First, try to get the API key from an environment variable
+api_key = os.getenv('OPENAI_API_KEY')
+
+# If the environment variable is not set, try to read the key from a file
+if api_key is None:
+    try:
+        with open('api_token.txt', 'r') as file:
+            api_key = file.read().strip()
+    except FileNotFoundError:
+        print("Error: The OPENAI_API_KEY environment variable is not set, and api_token.txt was not found. Please set the environment variable or create this file with your OpenAI API key.")
+        sys.exit(1)
+
+# If the key is still None at this point, neither method was successful
+if api_key is None:
+    print("Error: Failed to obtain OpenAI API key. Please set the OPENAI_API_KEY environment variable or create a file named api_token.txt with your OpenAI API key.")
+    sys.exit(1)
+
+# Now initialize the OpenAI client with the API key
+client = OpenAI(api_key=api_key)
+
 # ~~~
 #   ==========
 # > let's roll
@@ -182,24 +213,6 @@ chatroom_contexts = {}
 
 # (for multi-user mode) Initialize an empty dictionary for each user's context
 user_contexts = {}
-
-# API key reading
-# First, try to get the API key from an environment variable
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
-# If the environment variable is not set, try to read the key from a file
-if openai.api_key is None:
-    try:
-        with open('api_token.txt', 'r') as file:
-            openai.api_key = file.read().strip()
-    except FileNotFoundError:
-        print("Error: The OPENAI_API_KEY environment variable is not set, and api_token.txt was not found. Please set the environment variable or create this file with your OpenAI API key.")
-        sys.exit(1)
-
-# If the key is still None at this point, neither method was successful
-if openai.api_key is None:
-    print("Error: Failed to obtain OpenAI API key. Please set the OPENAI_API_KEY environment variable or create a file named api_token.txt with your OpenAI API key.")
-    sys.exit(1)
 
 # turns
 # global turns
@@ -245,32 +258,6 @@ class CustomFormatter(logging.Formatter):
 logging_format = '[{now}][{levelname}] {message}'
 logging.basicConfig(format=logging_format, style='{', level=logging.INFO)
 logging.getLogger().handlers[0].formatter = CustomFormatter(logging_format, style='{')
-
-""" # split messages that are too long
-def split_message(message, max_length):
-    return [message[i:i+max_length] for i in range(0, len(message), max_length)] """
-
-""" def split_message(message, max_length):
-    # Subtract the length of other parts of the IRC message from max_length
-    max_length -= len("PRIVMSG {} :".format(CHANNEL)) + len("\r\n") + len(NICKNAME)
-    return [message[i:i+max_length] for i in range(0, len(message), max_length)] """
-
-""" def split_message(message, max_bytes):
-    messages = []
-    current_message = ""
-    current_bytes = 0
-    for word in message.split():
-        word_bytes = len(word.encode('utf-8'))
-        if current_bytes + word_bytes < max_bytes:
-            current_message += word + " "
-            current_bytes += word_bytes
-        else:
-            messages.append(current_message.strip())  # strip trailing spaces
-            current_message = word + " "
-            current_bytes = word_bytes
-    if current_message:
-        messages.append(current_message.strip())  # strip trailing spaces
-    return messages """
 
 def split_message(message, max_bytes):
     messages = []
@@ -326,7 +313,6 @@ class Bot:
                 PORT, 
                 self.nickname, 
                 username=USERNAME, # Pass the USERNAME here
-                realname=REALNAME  # Pass the REALNAME here
             )
         except irc.client.ServerConnectionError as x:
             logging.error(f"Failed to connect to {self.server}: {x}")
@@ -352,7 +338,6 @@ class Bot:
     # Join the channel after the connection is established
         print("[INFO] Connection to server established. Joining channel.")
         self.connection.join(self.channel)
-
 
     # Commands to take in as `/msg`'s from admins
     def on_privmsg(self, connection, event):
@@ -489,7 +474,6 @@ class Bot:
                             max_bytes = 500 - len('PRIVMSG') - len(self.channel) - len(':') - 2
                             response_parts = split_message(response, max_bytes)
 
-
                             print(f"Response parts: {response_parts}")
                             time.sleep(REPLY_DELAY_SECONDS)  # Pause for a set number of seconds before sending the message
                             for part in response_parts:
@@ -525,26 +509,20 @@ class Bot:
         for turn in conversation_history:
             conversation.append({'role': 'user', 'content': turn})
 
-        response = openai.ChatCompletion.create(
-            # model="gpt-4-0613", # for gpt-4
-            model="gpt-3.5-turbo",
-            messages=conversation,
+        response = client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=conversation
         )
 
         # Check if the model output is a function call
-        model_output = response['choices'][0]['message']
-        if model_output['role'] == 'assistant' and 'type' in model_output and model_output['type'] == 'function_call':
-            function_name = model_output['content']['name']
-            function_args = model_output['content']['args']
+        # model_output = response['choices'][0]['message']
+        # If the response is a custom object, you might need to use a specific method to get the desired data.
+        # For example, response.get_choices() or similar. This is a placeholder and should be replaced with the correct method.
+        try:
 
-            # If the function is 'quit', instruct the bot to quit
-            if function_name == 'quit':
-                print("Received quit command from the model.")
-                bot.quit()  # Assuming you have a quit method in your Bot class
-        else:
-            # If the model output is not a function call, parse the output and add it to the conversation history
-            output_text = model_output['content']
-            output_text_clean = ""
+            # new way of implementing in `openai` python library v1.6.1
+            model_output = response.choices[0].message.content.strip()
+            output_text = model_output  # Initialize output_text with model_output
 
             # If the bot is set to replace emojis, do it
             if USE_EMOJI_DICT:
@@ -572,11 +550,20 @@ class Bot:
                 output_text_clean = output_text.split("> ", 2)[-1]  # splits at the second '>'
                 output_text_clean = output_text_clean.strip()  # remove leading and trailing whitespace
 
+            # Example of processing the output as plain text
+            # output_text_clean = model_output.strip()
+
             # Add the cleaned output_text to the conversation history
             conversation_history.append(f"<{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}> <{NICKNAME}> {output_text_clean}")
 
             # Update the chatroom's conversation history in chatroom_contexts
             chatroom_contexts[bot.channel] = conversation_history
+
+            """ # Add the cleaned output_text to the conversation history
+            conversation_history.append(f"<{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}> <{NICKNAME}> {output_text_clean}")
+
+            # Update the chatroom's conversation history in chatroom_contexts
+            chatroom_contexts[bot.channel] = conversation_history """
 
             # convert sentence breaks to lowercase
             if CONVERT_TO_LOWER:
@@ -587,6 +574,10 @@ class Bot:
             # Remove newline and carriage return characters
             # IMPORTANT: these are pretty much mandatory; otherwise the client will crash.
             return output_text_clean.replace("\n", " ").replace("\r", " ")
+
+        except AttributeError:
+            print("Error: Unable to access response data. Please check the API documentation for correct usage.")
+            return ""
 
     def start(self):
         self.connect()

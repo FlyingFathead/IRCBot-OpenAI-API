@@ -1,16 +1,21 @@
 # IRC Bot for OpenAI-API
-Python-based simple IRC (intenet relay chat) chatroom bot that uses OpenAI API (GPT-3.5 / GPT-4).
+Python-based simple IRC (intenet relay chat) chatroom bot that uses OpenAI API (i.e. GPT-3.5 / GPT-4... ).
+
+Runs on `openai` library version `1.6.1` (up to date in January 2024!)
 
 Wanna shove that GPT-3.5 or GPT-4 OpenAI API into good'ole IRC as a chatbot? Now it's possible!
 
 # What's new
-`Aug 3, 2023 (v.031)`: Bot now takes in admin messages as `/msg bot !command <options>` if it needs to be adjusted on the fly. Acknowledgements of bot commands come into the private msg's if you're an admin.
 
-`Aug 3, 2023 (v.029)`: Bot now supports joining password protected channels (i.e. to prevent abuse).
+`Jan 4, 2024 (v0.32)`: OpenAI API calls have been updated to use the `1.6.1` version of `openai` pip library. Multiple smaller bugfixes.
 
-`Aug 3, 2023 (v.028)`: all config now handled via `config.json`, edit that to configure the bot. Language settings also apply to the bot's output language, so no need to change everything manually anymore. New variable, `ANSWER_PROBABILITY` sets the likelihood for the bot answering when in public mode.
+`Aug 3, 2023 (v0.31)`: Bot now takes in admin messages as `/msg bot !command <options>` if it needs to be adjusted on the fly. Acknowledgements of bot commands come into the private msg's if you're an admin.
 
-`Aug 3, 2023 (v.025)`: Added some increased parsing functionalities, such as utf-8/unciode emoji to ASCII conversion tables (where utf8-emojis are not supported or wanted) and a lowercase converter to make the bot "fit" better into an IRC channel's output style.
+`Aug 3, 2023 (v0.29)`: Bot now supports joining password protected channels (i.e. to prevent abuse).
+
+`Aug 3, 2023 (v0.28)`: all config now handled via `config.json`, edit that to configure the bot. Language settings also apply to the bot's output language, so no need to change everything manually anymore. New variable, `ANSWER_PROBABILITY` sets the likelihood for the bot answering when in public mode.
+
+`Aug 3, 2023 (v0.25)`: Added some increased parsing functionalities, such as utf-8/unciode emoji to ASCII conversion tables (where utf8-emojis are not supported or wanted) and a lowercase converter to make the bot "fit" better into an IRC channel's output style.
 
 New functions:
 ```
@@ -22,9 +27,15 @@ USE_EMOJI_DICT = True
 CONVERT_TO_LOWER = True
 ```
 # Prerequisites
-- at least Python 3.8 or later, probably. Tested and running OK on `Python 3.9.16`
-- `openai`, `jaraco.stream` and `irc` PyPi packages
-- OpenAI API key (from [openai.com](https://openai.com))
+- At least Python 3.8 or later, probably. Tested and running OK on Python `3.9.16` and `3.10.12`.
+- `openai`, `jaraco.stream` and `irc` PyPi packages, tested to work on these:
+```
+openai==1.6.1
+jaraco.stream==3.0.3
+irc==20.3.1
+```
+- You can install all of the above with `pip install -r requirements.txt` after cloning the repo.
+- You will also need an OpenAI API key from [openai.com](https://openai.com).
 
 # Install
 
