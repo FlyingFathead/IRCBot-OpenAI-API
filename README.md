@@ -1,5 +1,5 @@
 # IRC Bot for OpenAI-API
-Python-based simple IRC (intenet relay chat) chatroom bot that uses OpenAI API (i.e. GPT-3.5 / GPT-4... ).
+A Python-based simple IRC (Intenet Relay Chat) chatroom bot that uses OpenAI API (i.e. GPT-3.5 / GPT-4... ).
 
 Runs on `openai` library version `1.6.1` (up to date in January 2024!)
 
@@ -62,6 +62,6 @@ By default, the bot uses either OpenAI's GPT-3-5 or GPT-4 model (user defined) t
 Enjoy!
 
 ---
-Brought to you by [FlyingFathead](https://github.com/FlyingFathead) & ChaosWhisperer. 
+Brought to you by [FlyingFathead](https://github.com/FlyingFathead) w/ ghostcode by ChaosWhisperer. 
 
 Contact: flyingfathead <|> protonmail <|> com
